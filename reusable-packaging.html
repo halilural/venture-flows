@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yeniden kullanılabilir ambalaj — operasyon akışı</title>
+<style>
+:root{
+  --ink:#16212B;
+  --ink-60:rgba(22,33,43,.60);
+  --ink-30:rgba(22,33,43,.28);
+  --ink-12:rgba(22,33,43,.12);
+  --ground:#D3DED9;
+  --panel:#F2F7F5;
+  --accent:#1F7A54;
+  --accent2:#C98A15;
+  --clean:#2E6B57;
+  --stop:#963A2E;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;padding:0 0 72px}
+.wrap{max-width:820px;margin:0 auto;padding:0 20px}
+.nav{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:20px 0 0}
+.nav a{color:var(--ink-60);text-decoration:none;border-bottom:2px solid transparent;padding-bottom:2px}
+.nav a:hover{color:var(--ink)}
+.nav a[aria-current]{color:var(--accent);border-color:var(--accent)}
+.hd{padding:28px 0 8px}
+.hd-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-60);display:flex;flex-wrap:wrap;gap:8px 14px;padding-bottom:20px;border-bottom:2px solid var(--ink)}
+.hd-title{font-family:var(--mono);font-size:clamp(30px,7.2vw,52px);font-weight:700;letter-spacing:-.035em;line-height:1.02;margin:26px 0 0;text-wrap:balance}
+.hd-title em{font-style:normal;color:var(--accent)}
+.hd-sub{margin:16px 0 0;max-width:48ch;font-size:16px;color:var(--ink-60)}
+.lp{margin:34px 0 0;background:var(--panel);border:2px solid var(--ink);padding:8px 8px 18px}
+.lp-svg{display:block;width:100%;height:auto}
+.lp-cap{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-60);text-align:center;padding:0 14px}
+.kn{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;background:var(--ink);border:2px solid var(--ink);margin:22px 0 0}
+.kn-cell{background:var(--panel);padding:16px 14px}
+.kn-val{font-family:var(--mono);font-size:clamp(20px,5vw,27px);font-weight:700;letter-spacing:-.03em;display:block}
+.kn-lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-60);margin-top:5px;display:block}
+.sec{margin:56px 0 0}
+.sec-head{display:flex;align-items:baseline;gap:12px;border-bottom:2px solid var(--ink);padding-bottom:9px}
+.sec-mark{font-family:var(--mono);font-size:11px;letter-spacing:.13em;color:var(--accent);font-weight:700}
+.sec-title{font-family:var(--mono);font-size:16px;font-weight:700;letter-spacing:-.01em;margin:0}
+.sec-note{margin:14px 0 0;color:var(--ink-60);max-width:56ch;font-size:14.5px}
+.lk-bank{margin:22px 0 0;display:flex;flex-direction:column;gap:12px}
+.lk{background:var(--panel);border:2px solid var(--ink);display:grid;grid-template-columns:60px 1fr;position:relative}
+.lk-plate{border-right:2px solid var(--ink);padding:14px 0 0;display:flex;flex-direction:column;align-items:center;gap:11px;background:linear-gradient(180deg,rgba(22,33,43,.05),rgba(22,33,43,0) 90px)}
+.lk-no{font-family:var(--mono);font-size:19px;font-weight:700;letter-spacing:-.04em}
+.lk-vent{width:26px;display:flex;flex-direction:column;gap:4px}
+.lk-vent i{display:block;height:2px;background:var(--ink-30)}
+.lk-hole{width:7px;height:7px;border-radius:50%;background:var(--ink);margin-top:2px}
+.lk-body{padding:14px 16px 16px}
+.lk-time{font-family:var(--mono);font-size:11px;letter-spacing:.13em;color:var(--accent);font-weight:700;text-transform:uppercase}
+.lk-name{font-family:var(--mono);font-size:15.5px;font-weight:700;letter-spacing:-.01em;margin:3px 0 10px}
+.lk-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.lk-list li{position:relative;padding-left:16px;font-size:14px;line-height:1.45}
+.lk-list li::before{content:"";position:absolute;left:0;top:8px;width:7px;height:2px;background:var(--ink-30)}
+.lk-list b{font-family:var(--mono);font-weight:700;font-size:13.5px;letter-spacing:-.01em}
+.lk-foot{margin:12px 0 0;padding-top:10px;border-top:1px dashed var(--ink-30);font-family:var(--mono);font-size:11.5px;color:var(--ink-60);letter-spacing:.02em}
+.lk--stop{border-color:var(--stop);margin-left:26px}
+.lk--stop .lk-plate{border-right-color:var(--stop);background:rgba(150,58,46,.07)}
+.lk--stop .lk-no{color:var(--stop);font-size:15px}
+.lk--stop .lk-hole{background:var(--stop)}
+.lk--stop .lk-time{color:var(--stop)}
+.lk--branch{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--stop);padding-left:26px;margin-bottom:-4px}
+.lk--gain{border-color:var(--clean)}
+.lk--gain .lk-plate{border-right-color:var(--clean);background:rgba(46,107,87,.07)}
+.lk--gain .lk-no,.lk--gain .lk-time{color:var(--clean)}
+.lk--gain .lk-hole{background:var(--clean)}
+.mw{margin:22px 0 0;border:2px solid var(--ink);background:var(--panel);padding:18px 16px 16px}
+.mw-bar{display:flex;height:38px;border:2px solid var(--ink)}
+.mw-seg{position:relative;border-right:2px solid var(--ink)}
+.mw-seg:last-child{border-right:0}
+.mw-seg--out{background:repeating-linear-gradient(135deg,transparent,transparent 5px,var(--ink-12) 5px,var(--ink-12) 10px)}
+.mw-seg--keep{background:var(--accent)}
+.mw-key{display:flex;flex-wrap:wrap;gap:10px 18px;margin:14px 0 0}
+.mw-item{font-family:var(--mono);font-size:12px;letter-spacing:.01em;display:flex;align-items:center;gap:7px}
+.mw-swatch{width:11px;height:11px;border:1.5px solid var(--ink);flex:none}
+.mw-swatch--keep{background:var(--accent)}
+.mw-swatch--out{background:repeating-linear-gradient(135deg,transparent,transparent 3px,var(--ink-12) 3px,var(--ink-12) 6px)}
+.mw-sum{margin:16px 0 0;padding-top:14px;border-top:2px solid var(--ink);font-family:var(--mono);font-size:13px;line-height:1.7}
+.mw-sum strong{font-size:15px}
+.ph{margin:22px 0 0;position:relative;padding-left:26px}
+.ph::before{content:"";position:absolute;left:6px;top:10px;bottom:10px;width:2px;background:var(--ink)}
+.ph-step{position:relative;margin-bottom:20px}
+.ph-step::before{content:"";position:absolute;left:-26px;top:5px;width:14px;height:14px;background:var(--panel);border:2px solid var(--ink);border-radius:50%}
+.ph-step:last-child{margin-bottom:0}
+.ph-tag{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-60)}
+.ph-name{font-family:var(--mono);font-size:14.5px;font-weight:700;margin:2px 0 4px}
+.ph-do{font-size:14px;color:var(--ink-60);margin:0}
+.ph-gate{margin:9px 0 0;border-left:3px solid var(--accent);padding:7px 0 7px 11px;font-family:var(--mono);font-size:12.5px;line-height:1.5}
+.ph-gate span{color:var(--accent);font-weight:700}
+.ph-stop{margin:8px 0 0;border:2px solid var(--stop);color:var(--stop);padding:8px 11px;font-family:var(--mono);font-size:12px;line-height:1.5}
+.end{margin:56px 0 0;border-top:2px solid var(--ink);padding-top:20px;font-family:var(--mono);font-size:14px;line-height:1.6;max-width:54ch}
+.end b{color:var(--accent)}
+.end-meta{margin:18px 0 0;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-60)}
+@media (min-width:640px){.kn{grid-template-columns:repeat(4,1fr)}.lk{grid-template-columns:72px 1fr}}
+@media (prefers-reduced-motion:no-preference){
+  .draw{stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.6s cubic-bezier(.5,0,.2,1) forwards}
+  .spin{transform-origin:200px 200px;animation:spin 22s linear infinite}
+  .fade{opacity:0;animation:fade .6s ease forwards}
+  .fade--1{animation-delay:.5s}.fade--2{animation-delay:.9s}.fade--3{animation-delay:1.3s}.fade--4{animation-delay:1.7s}.fade--c{animation-delay:.2s}
+}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes fade{to{opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="nav" aria-label="Fikirler">
+    <a href="index.html">← Tüm fikirler</a>
+    <a href="reusable-packaging.html" aria-current="page">01 Ambalaj</a>
+    <a href="green-services.html">02 Yeşil servis</a>
+    <a href="productized-b2b.html">03 B2B servis</a>
+    <a href="laundry.html">Laundry</a>
+  </nav>
+
+  <header class="hd">
+    <div class="hd-eyebrow">
+      <span>Kraków · Kazimierz / Podgórze</span>
+      <span>Yeniden kullanım ağı</span>
+      <span>v1 · PPWR rüzgârı</span>
+    </div>
+    <h1 class="hd-title">Kap senin,<br>döngü <em>senin işin.</em></h1>
+    <p class="hd-sub">Cafe ve kantinlere depozitolu tekrar-kullanımlık kap koy. Müşteri kabı ödünç alır, iade noktasına bırakır; sen toplar, taşerona yıkatır, döndürürsün. Tek kullanımlığı yasa yasaklıyor — sen alternatifi işletiyorsun.</p>
+  </header>
+
+  <!-- HERO: yeniden kullanım döngüsü -->
+  <section class="lp" aria-label="Yeniden kullanım döngüsü">
+    <svg class="lp-svg" viewBox="0 0 400 400" role="img" aria-label="Dairesel döngü: dağıt, kullan, iade, yıka — ve tekrar başa">
+      <defs>
+        <marker id="arw" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M0 0 L10 5 L0 10 z" fill="#1F7A54"/>
+        </marker>
+      </defs>
+
+      <!-- dönen dış halka -->
+      <g class="spin">
+        <circle cx="200" cy="200" r="150" fill="none" stroke="#1F7A54" stroke-width="2" stroke-opacity=".28" stroke-dasharray="4 12"/>
+      </g>
+
+      <!-- ana döngü yayı (çizilerek beliren) -->
+      <circle class="draw" cx="200" cy="200" r="118" fill="none" stroke="#1F7A54" stroke-width="6"
+              pathLength="1" stroke-dasharray="1" marker-end="url(#arw)" transform="rotate(-90 200 200)"/>
+
+      <!-- merkez: kap -->
+      <g class="fade fade--c">
+        <path d="M172 176 h56 l-6 60 a10 10 0 0 1 -10 9 h-24 a10 10 0 0 1 -10 -9 z"
+              fill="#F2F7F5" stroke="#16212B" stroke-width="3"/>
+        <rect x="166" y="166" width="68" height="12" rx="3" fill="#F2F7F5" stroke="#16212B" stroke-width="3"/>
+        <path d="M186 196 l3 34 M200 196 v34 M214 196 l-3 34" stroke="#16212B" stroke-width="2" opacity=".3"/>
+        <text x="200" y="270" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="12.5" font-weight="700" letter-spacing="2" fill="#16212B">KAP</text>
+        <text x="200" y="287" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="10" letter-spacing="1.2" fill="#16212B" opacity=".55">~100 DÖNGÜ ÖMÜR</text>
+      </g>
+
+      <!-- 4 düğüm -->
+      <g class="fade fade--1">
+        <circle cx="200" cy="82" r="8" fill="#1F7A54" stroke="#16212B" stroke-width="3"/>
+        <text x="200" y="60" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="13" font-weight="700" fill="#16212B">DAĞIT</text>
+        <text x="200" y="74" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="9.5" letter-spacing="1" fill="#16212B" opacity=".55">partner mekân</text>
+      </g>
+      <g class="fade fade--2">
+        <circle cx="318" cy="200" r="8" fill="#1F7A54" stroke="#16212B" stroke-width="3"/>
+        <text x="332" y="197" font-family="ui-monospace,Menlo,monospace" font-size="13" font-weight="700" fill="#16212B">KULLAN</text>
+        <text x="332" y="211" font-family="ui-monospace,Menlo,monospace" font-size="9.5" letter-spacing="1" fill="#16212B" opacity=".55">müşteri</text>
+      </g>
+      <g class="fade fade--3">
+        <circle cx="200" cy="318" r="8" fill="#1F7A54" stroke="#16212B" stroke-width="3"/>
+        <text x="200" y="344" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="13" font-weight="700" fill="#16212B">İADE</text>
+        <text x="200" y="358" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="9.5" letter-spacing="1" fill="#16212B" opacity=".55">akıllı iade noktası</text>
+      </g>
+      <g class="fade fade--4">
+        <circle cx="82" cy="200" r="8" fill="#1F7A54" stroke="#16212B" stroke-width="3"/>
+        <text x="68" y="197" text-anchor="end" font-family="ui-monospace,Menlo,monospace" font-size="13" font-weight="700" fill="#16212B">YIKA</text>
+        <text x="68" y="211" text-anchor="end" font-family="ui-monospace,Menlo,monospace" font-size="9.5" letter-spacing="1" fill="#16212B" opacity=".55">taşeron</text>
+      </g>
+    </svg>
+    <p class="lp-cap">Kap hiç çöpe gitmiyor. Her döngü marjinal maliyetle tekrar gelir üretiyor.</p>
+  </section>
+
+  <!-- ANAHTAR SAYILAR -->
+  <div class="kn">
+    <div class="kn-cell"><span class="kn-val">40–70k</span><span class="kn-lab">Başlangıç · zł</span></div>
+    <div class="kn-cell"><span class="kn-val">8–14k</span><span class="kn-lab">Aylık sabit · zł</span></div>
+    <div class="kn-cell"><span class="kn-val">~0.6 zł</span><span class="kn-lab">Döngü başı net</span></div>
+    <div class="kn-cell"><span class="kn-val">80–120</span><span class="kn-lab">Başabaş partner</span></div>
+  </div>
+
+  <!-- AKIŞ -->
+  <section class="sec">
+    <div class="sec-head"><span class="sec-mark">A</span><h2 class="sec-title">Akış</h2></div>
+    <p class="sec-note">Dört düğüm, bir istisna kolu. Değer, döngünün her turunda kabı çöpe göndermeden tekrar gelir üretmesinde.</p>
+    <div class="lk-bank">
+
+      <article class="lk">
+        <div class="lk-plate"><span class="lk-no">01</span><span class="lk-vent"><i></i><i></i><i></i></span><span class="lk-hole"></span></div>
+        <div class="lk-body">
+          <div class="lk-time">Bir kez · anlaşma başında</div>
+          <h3 class="lk-name">Partner kazanımı</h3>
+          <ul class="lk-list">
+            <li><b>B2B</b> — cafe / ofis kantini / kampüs, aylık <b>300–600 zł</b> abonelik + döngü ücreti</li>
+            <li>QR'lı kap seti + iade noktası (basit iade rafı veya akıllı dolap) kur</li>
+            <li>PPWR uyumu argümanı: <b>2026 Ağustos</b> zorunluluğu satışı senin yerine yapıyor</li>
+          </ul>
+          <p class="lk-foot">Bir semtte kritik kütle: yeterli iade noktası olmadan müşteri deneyimi zayıf.</p>
+        </div>
+      </article>
+
+      <article class="lk">
+        <div class="lk-plate"><span class="lk-no">02</span><span class="lk-vent"><i></i><i></i><i></i></span><span class="lk-hole"></span></div>
+        <div class="lk-body">
+          <div class="lk-time">Her gün · dağıtım</div>
+          <h3 class="lk-name">Kullanım</h3>
+          <ul class="lk-list">
+            <li>Müşteri kabı app veya <b>depozito</b> (kap başı 10–20 zł) ile ödünç alır</li>
+            <li>Kap QR ile kime çıktığı takip edilir — kayıp riski depozitoyla kapanır</li>
+            <li>İade süresi (örn. 14 gün) app'ten hatırlatılır</li>
+          </ul>
+          <p class="lk-foot">Depozito modeli, kayıp kabı otomatik gelire çevirir. Ceza değil, sigorta.</p>
+        </div>
+      </article>
+
+      <article class="lk">
+        <div class="lk-plate"><span class="lk-no">03</span><span class="lk-vent"><i></i><i></i><i></i></span><span class="lk-hole"></span></div>
+        <div class="lk-body">
+          <div class="lk-time">Her gün · rota</div>
+          <h3 class="lk-name">İade & yıkama — taşeron</h3>
+          <ul class="lk-list">
+            <li>Rota iade noktalarını dolaşır, kirli kapları QR ile envantere alır</li>
+            <li>Ticari bulaşıkhane / pralnia'ya teslim — <b>toplu hijyen yıkama</b></li>
+            <li>Kurut, kontrol et, partner mekâna temiz döndür — döngü kapanır</li>
+          </ul>
+          <p class="lk-foot">Sinyalli iade noktası rotaya girer; boş noktaya uğrama.</p>
+        </div>
+      </article>
+
+      <div class="lk--branch">↳ kap kayıp / kırık / hijyen dışı ise</div>
+      <article class="lk lk--stop">
+        <div class="lk-plate"><span class="lk-no">!</span><span class="lk-vent"><i></i><i></i><i></i></span><span class="lk-hole"></span></div>
+        <div class="lk-body">
+          <div class="lk-time">İstisna</div>
+          <h3 class="lk-name">Kayıp / fire</h3>
+          <ul class="lk-list">
+            <li>İade edilmeyen kap: depozito gelir yazılır, envanterden düşülür</li>
+            <li>Kırık / çizik / deforme: döngüden çıkar, geri dönüşüme</li>
+            <li>Fire oranını fiyata göm — kap başı ~<b>%1–2 tur</b> kaybı normaldir</li>
+          </ul>
+          <p class="lk-foot">Kap ekonomisi fire toleransıyla kurulur. Sonradan pazarlık edilmez.</p>
+        </div>
+      </article>
+
+      <article class="lk lk--gain">
+        <div class="lk-plate"><span class="lk-no">04</span><span class="lk-vent"><i></i><i></i><i></i></span><span class="lk-hole"></span></div>
+        <div class="lk-body">
+          <div class="lk-time">Ağ kurulduktan sonra</div>
+          <h3 class="lk-name">Ek gelir</h3>
+          <ul class="lk-list">
+            <li>Etkinlik / festival — tek seferde binlerce döngü, yüksek yoğunluk</li>
+            <li>Markalı kap — sponsor/logo baskısı, reklam geliri</li>
+            <li>Veri — mekâna tüketim/atık raporu, ESG raporlama hizmeti</li>
+          </ul>
+          <p class="lk-foot">Aynı ağ, aynı rota, aynı taşeron. Marjinal maliyet düşük — asıl kâr burada.</p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- PARA -->
+  <section class="sec">
+    <div class="sec-head"><span class="sec-mark">B</span><h2 class="sec-title">Bir döngü nereye gidiyor</h2></div>
+    <p class="sec-note">Tek kabın tek turundan elde edilen ~1.4 zł gelirin dağılımı. Tarama = dışarı çıkan, dolu = sende kalan.</p>
+    <div class="mw">
+      <div class="mw-bar" role="img" aria-label="Döngü geliri: yıkama, lojistik, kap amortismanı, net marj">
+        <div class="mw-seg mw-seg--out" style="width:32%"></div>
+        <div class="mw-seg mw-seg--out" style="width:25%"></div>
+        <div class="mw-seg mw-seg--out" style="width:12%"></div>
+        <div class="mw-seg mw-seg--keep" style="width:31%"></div>
+      </div>
+      <div class="mw-key">
+        <span class="mw-item"><i class="mw-swatch mw-swatch--out"></i>~0.45 zł taşeron yıkama</span>
+        <span class="mw-item"><i class="mw-swatch mw-swatch--out"></i>~0.35 zł lojistik/rota</span>
+        <span class="mw-item"><i class="mw-swatch mw-swatch--out"></i>~0.15 zł kap amortismanı+fire</span>
+        <span class="mw-item"><i class="mw-swatch mw-swatch--keep"></i>~0.45 zł net</span>
+      </div>
+      <div class="mw-sum">
+        Gelir hacimden gelir: <strong>döngü × yoğunluk</strong>, tek büyük müşteriden değil<br>
+        Aylık sabit <strong>8–14k zł</strong> → başabaş <strong>80–120 aktif partner</strong> veya eşdeğer etkinlik hacmi
+      </div>
+    </div>
+  </section>
+
+  <!-- FAZLAR -->
+  <section class="sec">
+    <div class="sec-head"><span class="sec-mark">C</span><h2 class="sec-title">Büyüme kapıları</h2></div>
+    <p class="sec-note">Her kapı bir “devam et” değil, bir “dur” fırsatı. Kapıyı geçmeden bir sonraki fazın parasını harcama.</p>
+    <div class="ph">
+      <div class="ph-step">
+        <div class="ph-tag">Faz 0 · 0–3 ay · 8–15k zł</div>
+        <div class="ph-name">Tek semt, elle döngü</div>
+        <p class="ph-do">Kazimierz'de 3–5 cafe, birkaç yüz kap, app yerine basit QR + Excel. Tek test: müşteri kabı iade ediyor mu, mekân ödüyor mu?</p>
+        <div class="ph-gate"><span>KAPI →</span> İade oranı %85+ ve mekânlar yenilendi mi?</div>
+        <div class="ph-stop">İade %70'in altındaysa DUR. Döngü kapanmıyorsa model yok.</div>
+      </div>
+      <div class="ph-step">
+        <div class="ph-tag">Faz 1 · 3–9 ay · 40–70k zł</div>
+        <div class="ph-name">Semt ağı + sistem</div>
+        <p class="ph-do">Bir semtin çoğunluğu, akıllı iade noktaları, kendi app'in, taşeron sözleşmesi, depozito otomasyonu.</p>
+        <div class="ph-gate"><span>KAPI →</span> 80+ partner ve aylık döngü hedefi tuttu mu?</div>
+      </div>
+      <div class="ph-step">
+        <div class="ph-tag">Faz 2 · 9–24 ay · 150–300k zł</div>
+        <div class="ph-name">Şehir + kantin + etkinlik</div>
+        <p class="ph-do">Ofis/üniversite kantinleri, festival sözleşmeleri, ortak ekle. Günlük operasyonu yürütecek ortağa %30–40, baştan planla.</p>
+        <div class="ph-gate"><span>KAPI →</span> 300+ partner <em>ve</em> etkinlik geliri sabit gideri karşılıyor mu?</div>
+      </div>
+      <div class="ph-step">
+        <div class="ph-tag">Faz 3 · 24 ay+</div>
+        <div class="ph-name">Çoklu şehir / franchise</div>
+        <p class="ph-do">Kanıtlanmış semt oyun kitabını başka şehre taşı ya da yerel operatörlere franchise ver. Kendi yıkama tesisi ancak bu hacimde mantıklı.</p>
+        <div class="ph-stop">Kapı açılmadıysa tek şehirde derinleş. Bu başarısızlık değil, doğru karar.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="end">
+    Çoğu kişi bu işte önce kap basar, sonra iade noktası arar.<br>
+    <b>Sıralama tersine: önce yoğun bir semtte döngüyü kapat, kabı sonra çoğalt.</b>
+    <p class="end-meta">Rakamlar 2026 Kraków tahmini · netto · PPWR yürürlük 12.08.2026 · muhasebeciyle VAT/PKD'yi Faz 0'da netleştir</p>
+  </div>
+
+</div>
+
+<script>
+// dönen halkaya ek: nokta işaretleri statik SVG'de; JS yalnızca reduced-motion dışı ince detay
+</script>
+</body>
+</html>
