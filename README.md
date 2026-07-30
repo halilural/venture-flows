@@ -10,9 +10,20 @@ tekrarlayan rota · abonelik geliri · B2B önce.
 
 ## Sayfalar
 
+### Grup I — Sıfırdan 1–2 kişi (düşük sermaye · AI kaldıraçlı)
+
 | Dosya | Fikir | Öne çıkan |
 | --- | --- | --- |
-| [`index.html`](./index.html) | Hub — dört fikrin kartları | Giriş sayfası |
+| [`microsaas.html`](./microsaas.html) | Sıkıcı niş mikro-SaaS | %80–90 marj, en yüksek tavan |
+| [`ai-automation-agency.html`](./ai-automation-agency.html) | AI otomasyon ajansı | ~sıfır sermaye, 2 kişi ideal |
+| [`productized-service.html`](./productized-service.html) | Ürünleşmiş hizmet | En hızlı nakit, uzaktan |
+| [`airbnb-cohosting.html`](./airbnb-cohosting.html) | Airbnb co-hosting | Sermayesiz, kira gelirinin %15–25'i |
+
+### Grup II — Operasyon-ağırlıklı ilk koleksiyon
+
+| Dosya | Fikir | Öne çıkan |
+| --- | --- | --- |
+| [`index.html`](./index.html) | Hub — sekiz fikrin kartları | Giriş sayfası |
 | [`reusable-packaging.html`](./reusable-packaging.html) | Yeniden kullanılabilir ambalaj ağı | PPWR yasa rüzgârı (2026), en güçlü aday |
 | [`green-services.html`](./green-services.html) | Güneş & EV bakım aboneliği | %55–70 marj, tekrarlayan sözleşme |
 | [`productized-b2b.html`](./productized-b2b.html) | Ürünleşmiş B2B servis | ~sıfır sermaye, uzaktan, %60–85 marj |

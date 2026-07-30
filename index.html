@@ -6,43 +6,44 @@
 <title>İş fikirleri — operasyon akışları</title>
 <style>
 :root{
-  --ink:#16212B;
-  --ink-60:rgba(22,33,43,.60);
-  --ink-30:rgba(22,33,43,.28);
-  --ink-12:rgba(22,33,43,.12);
-  --ground:#D6DCE0;
-  --panel:#F4F7F8;
+  --ink:#16212B;--ink-60:rgba(22,33,43,.60);--ink-30:rgba(22,33,43,.28);--ink-12:rgba(22,33,43,.12);
+  --ground:#D6DCE0;--panel:#F4F7F8;
   --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
   --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
 }
-*{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;padding:0 0 72px}
 .wrap{max-width:820px;margin:0 auto;padding:0 20px}
 .hd{padding:48px 0 8px}
 .hd-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-60);display:flex;flex-wrap:wrap;gap:8px 14px;padding-bottom:20px;border-bottom:2px solid var(--ink)}
 .hd-title{font-family:var(--mono);font-size:clamp(30px,7.2vw,52px);font-weight:700;letter-spacing:-.035em;line-height:1.02;margin:26px 0 0;text-wrap:balance}
-.hd-sub{margin:16px 0 0;max-width:52ch;font-size:16px;color:var(--ink-60)}
-.grid{margin:40px 0 0;display:flex;flex-direction:column;gap:2px;background:var(--ink);border:2px solid var(--ink)}
+.hd-sub{margin:16px 0 0;max-width:54ch;font-size:16px;color:var(--ink-60)}
+.group{margin:40px 0 0}
+.group-label{display:flex;align-items:baseline;gap:12px;border-bottom:2px solid var(--ink);padding-bottom:9px;margin-bottom:2px}
+.group-mark{font-family:var(--mono);font-size:11px;letter-spacing:.13em;font-weight:700;color:var(--ink)}
+.group-name{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:-.01em;margin:0}
+.group-note{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--ink-60);margin-left:auto}
+.grid{display:flex;flex-direction:column;gap:2px;background:var(--ink);border:2px solid var(--ink);border-top:0}
 .card{background:var(--panel);padding:22px 20px;text-decoration:none;color:inherit;display:block;position:relative;transition:background .15s ease}
 .card:hover,.card:focus-visible{background:#fff}
 .card-top{display:flex;align-items:baseline;gap:12px}
 .card-no{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--accent)}
 .card-tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-60);margin-left:auto}
-.card-name{font-family:var(--mono);font-size:clamp(19px,4.5vw,24px);font-weight:700;letter-spacing:-.02em;margin:10px 0 0}
+.card-name{font-family:var(--mono);font-size:clamp(18px,4.2vw,23px);font-weight:700;letter-spacing:-.02em;margin:10px 0 0}
 .card-name span{color:var(--accent)}
-.card-desc{margin:8px 0 0;color:var(--ink-60);font-size:14.5px;max-width:60ch}
+.card-desc{margin:8px 0 0;color:var(--ink-60);font-size:14px;max-width:62ch}
 .card-meta{margin:14px 0 0;display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--mono);font-size:11.5px;color:var(--ink-60)}
 .card-meta b{color:var(--ink);font-weight:700}
 .card-go{position:absolute;top:22px;right:20px;font-family:var(--mono);font-size:18px;color:var(--accent);transition:transform .15s ease}
 .card:hover .card-go{transform:translateX(4px)}
+.cA{--accent:#5B4BC4}.cB{--accent:#0E7C86}.cC{--accent:#B23A6E}.cD{--accent:#CC5A33}
 .c1{--accent:#1F7A54}.c2{--accent:#C07A0E}.c3{--accent:#2456B8}.c0{--accent:#C98A15}
-.foot{margin:40px 0 0;font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:var(--ink-60);line-height:1.7}
+.foot{margin:44px 0 0;font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:var(--ink-60);line-height:1.7}
 .foot a{color:var(--ink)}
 @media (prefers-reduced-motion:no-preference){
   .card{opacity:0;transform:translateY(8px);animation:rise .5s ease forwards}
-  .card:nth-child(1){animation-delay:.05s}.card:nth-child(2){animation-delay:.15s}
-  .card:nth-child(3){animation-delay:.25s}.card:nth-child(4){animation-delay:.35s}
+  .grid .card:nth-child(1){animation-delay:.04s}.grid .card:nth-child(2){animation-delay:.12s}
+  .grid .card:nth-child(3){animation-delay:.2s}.grid .card:nth-child(4){animation-delay:.28s}
 }
 @keyframes rise{to{opacity:1;transform:none}}
 :focus-visible{outline:3px solid var(--accent,#C98A15);outline-offset:2px}
@@ -53,49 +54,97 @@ body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
 
   <header class="hd">
     <div class="hd-eyebrow">
-      <span>Kraków · Avrupa</span>
-      <span>İş fikri koleksiyonu</span>
-      <span>operasyon akışları</span>
+      <span>Kraków · Avrupa</span><span>İş fikri koleksiyonu</span><span>operasyon akışları</span>
     </div>
-    <h1 class="hd-title">Dört fikir, aynı DNA.</h1>
-    <p class="hd-sub">Hepsi aynı iskeleti paylaşıyor: ağır ekipman yok, işi taşeron/ortak yapıyor · sabit nokta + tekrarlayan rota · abonelik geliri · B2B önce. Her kart bir operasyon akışına, birim ekonomiye ve fazlı büyüme planına açılıyor.</p>
+    <h1 class="hd-title">Sekiz fikir, iki kuşak.</h1>
+    <p class="hd-sub">Üstte: sıfırdan 1–2 kişinin, ~sıfıra yakın sermayeyle, dünyanın herhangi bir yerinden kurabileceği modern işler — AI kaldıraçlı, tekrarlayan gelirli. Altta: operasyon-ağırlıklı, sahaya dayalı ilk koleksiyon. Her kart bir animasyonlu operasyon-akışına, birim ekonomiye ve fazlı büyüme planına açılıyor.</p>
   </header>
 
-  <div class="grid">
+  <section class="group">
+    <div class="group-label">
+      <span class="group-mark">I</span>
+      <h2 class="group-name">Sıfırdan 1–2 kişi</h2>
+      <span class="group-note">düşük sermaye · AI kaldıraçlı</span>
+    </div>
+    <div class="grid">
 
-    <a class="card c1" href="reusable-packaging.html">
-      <span class="card-go">→</span>
-      <div class="card-top"><span class="card-no">01</span><span class="card-tag">En güçlü · yasal rüzgâr</span></div>
-      <h2 class="card-name">Yeniden kullanılabilir <span>ambalaj ağı</span></h2>
-      <p class="card-desc">Cafe ve kantinlere depozitolu tekrar-kullanımlık kap. Topla, yıkat, döndür. PPWR yasası 2026'da talebi zorunlu kılıyor.</p>
-      <div class="card-meta"><span>Başlangıç <b>40–70k zł</b></span><span>Döngü başı <b>~0.45 zł net</b></span><span>Başabaş <b>80–120 partner</b></span></div>
-    </a>
+      <a class="card cA" href="microsaas.html">
+        <span class="card-go">→</span>
+        <div class="card-top"><span class="card-no">A</span><span class="card-tag">En yüksek tavan</span></div>
+        <h2 class="card-name">Sıkıcı niş <span>mikro-SaaS</span></h2>
+        <p class="card-desc">Tek acılı, tekrarlayan problemi çözen küçük yazılım. AI ile haftalarca içinde kur; abonelik her ay geri gelir.</p>
+        <div class="card-meta"><span>Başlangıç <b>2–15k zł</b></span><span>Marj <b>%80–90</b></span><span>Başabaş <b>150–300 abone</b></span></div>
+      </a>
 
-    <a class="card c2" href="green-services.html">
-      <span class="card-go">→</span>
-      <div class="card-top"><span class="card-no">02</span><span class="card-tag">Yüksek marj · saha</span></div>
-      <h2 class="card-name">Güneş & EV <span>bakım aboneliği</span></h2>
-      <p class="card-desc">Herkes panel kurdu, kimse bakmıyor. Sen kurulumu değil tekrarlayan bakımı satıyorsun. Sözleşmeli, öngörülebilir.</p>
-      <div class="card-meta"><span>Başlangıç <b>20–40k zł</b></span><span>Marj <b>%55–70</b></span><span>Başabaş <b>40–60 sözleşme</b></span></div>
-    </a>
+      <a class="card cB" href="ai-automation-agency.html">
+        <span class="card-go">→</span>
+        <div class="card-top"><span class="card-no">B</span><span class="card-tag">2 kişi ideal</span></div>
+        <h2 class="card-name">AI <span>otomasyon ajansı</span></h2>
+        <p class="card-desc">Yerel KOBİ'lerin elle yaptığı işi AI akışlarına bağla. Kurulum ücreti + aylık bakım. Tek dikeye kilitlen, şablonu tekrar sat.</p>
+        <div class="card-meta"><span>Başlangıç <b>~sıfır</b></span><span>Marj <b>%65–80</b></span><span>Başabaş <b>10–15 retainer</b></span></div>
+      </a>
 
-    <a class="card c3" href="productized-b2b.html">
-      <span class="card-go">→</span>
-      <div class="card-top"><span class="card-no">03</span><span class="card-tag">En düşük sermaye · uzaktan</span></div>
-      <h2 class="card-name">Ürünleşmiş <span>B2B servis</span></h2>
-      <p class="card-desc">Tek dar hizmeti sabit-fiyat pakete dök: "3.000 zł/ay uyum denetimi". Sermaye ~sıfır, marj %60–85, tüm Avrupa'ya satılır.</p>
-      <div class="card-meta"><span>Başlangıç <b>2–8k zł</b></span><span>Marj <b>%60–85</b></span><span>Başabaş <b>8–12 müşteri</b></span></div>
-    </a>
+      <a class="card cC" href="productized-service.html">
+        <span class="card-go">→</span>
+        <div class="card-top"><span class="card-no">C</span><span class="card-tag">En hızlı nakit</span></div>
+        <h2 class="card-name">Ürünleşmiş <span>hizmet</span></h2>
+        <p class="card-desc">Tek beceriyi sabit-fiyat pakete dök (ghostwriting/SEO/klip). Teklif yok, menü yok. AI kaldıraçlı, haftalar içinde nakit.</p>
+        <div class="card-meta"><span>Başlangıç <b>~1k zł</b></span><span>Marj <b>%65–85</b></span><span>Başabaş <b>6–10 müşteri</b></span></div>
+      </a>
 
-    <a class="card c0" href="laundry.html">
-      <span class="card-go">→</span>
-      <div class="card-top"><span class="card-no">00</span><span class="card-tag">Başlangıç fikri</span></div>
-      <h2 class="card-name">Spor kıyafeti <span>abonelik servisi</span></h2>
-      <p class="card-desc">Gym dolabından kirli set topla, taşerona yıkat, aynı gün temiz döndür. Bu koleksiyonun çıkış noktası — DNA buradan geldi.</p>
-      <div class="card-meta"><span>Başlangıç <b>35–60k zł</b></span><span>Abone başı <b>69 zł marj</b></span><span>Başabaş <b>60–80 abone</b></span></div>
-    </a>
+      <a class="card cD" href="airbnb-cohosting.html">
+        <span class="card-go">→</span>
+        <div class="card-top"><span class="card-no">D</span><span class="card-tag">Sermayesiz · yerel</span></div>
+        <h2 class="card-name">Airbnb <span>co-hosting</span></h2>
+        <p class="card-desc">Başkalarının dairelerini turistler için yönet — kira gelirinin %15–25'i. Mülk almazsın; operasyonu satarsın. Krakow turizmi.</p>
+        <div class="card-meta"><span>Başlangıç <b>5–15k zł</b></span><span>Pay <b>%15–25</b></span><span>Başabaş <b>12–18 daire</b></span></div>
+      </a>
 
-  </div>
+    </div>
+  </section>
+
+  <section class="group">
+    <div class="group-label">
+      <span class="group-mark">II</span>
+      <h2 class="group-name">Operasyon-ağırlıklı ilk koleksiyon</h2>
+      <span class="group-note">saha · rota · taşeron</span>
+    </div>
+    <div class="grid">
+
+      <a class="card c1" href="reusable-packaging.html">
+        <span class="card-go">→</span>
+        <div class="card-top"><span class="card-no">01</span><span class="card-tag">Yasal rüzgâr</span></div>
+        <h2 class="card-name">Yeniden kullanılabilir <span>ambalaj ağı</span></h2>
+        <p class="card-desc">Cafe ve kantinlere depozitolu kap. Topla, yıkat, döndür. PPWR yasası 2026'da talebi zorunlu kılıyor.</p>
+        <div class="card-meta"><span>Başlangıç <b>40–70k zł</b></span><span>Döngü <b>~0.45 zł net</b></span><span>Başabaş <b>80–120 partner</b></span></div>
+      </a>
+
+      <a class="card c2" href="green-services.html">
+        <span class="card-go">→</span>
+        <div class="card-top"><span class="card-no">02</span><span class="card-tag">Yüksek marj</span></div>
+        <h2 class="card-name">Güneş & EV <span>bakım aboneliği</span></h2>
+        <p class="card-desc">Herkes panel kurdu, kimse bakmıyor. Kurulumu değil tekrarlayan bakımı sat. Sözleşmeli, öngörülebilir.</p>
+        <div class="card-meta"><span>Başlangıç <b>20–40k zł</b></span><span>Marj <b>%55–70</b></span><span>Başabaş <b>40–60 sözleşme</b></span></div>
+      </a>
+
+      <a class="card c3" href="productized-b2b.html">
+        <span class="card-go">→</span>
+        <div class="card-top"><span class="card-no">03</span><span class="card-tag">Uyum odaklı</span></div>
+        <h2 class="card-name">Ürünleşmiş <span>B2B uyum servisi</span></h2>
+        <p class="card-desc">Sabit-fiyat uyum denetimi paketi (AI Act / GDPR / KSeF). Sermaye ~sıfır, uzaktan, %60–85 marj.</p>
+        <div class="card-meta"><span>Başlangıç <b>2–8k zł</b></span><span>Marj <b>%60–85</b></span><span>Başabaş <b>8–12 müşteri</b></span></div>
+      </a>
+
+      <a class="card c0" href="laundry.html">
+        <span class="card-go">→</span>
+        <div class="card-top"><span class="card-no">00</span><span class="card-tag">Başlangıç fikri</span></div>
+        <h2 class="card-name">Spor kıyafeti <span>abonelik servisi</span></h2>
+        <p class="card-desc">Gym dolabından kirli set topla, taşerona yıkat, aynı gün temiz döndür. Bu koleksiyonun çıkış noktası.</p>
+        <div class="card-meta"><span>Başlangıç <b>35–60k zł</b></span><span>Abone <b>69 zł marj</b></span><span>Başabaş <b>60–80 abone</b></span></div>
+      </a>
+
+    </div>
+  </section>
 
   <p class="foot">
     Rakamlar 2026 Kraków / Avrupa tahminleridir · netto · her fikirde VAT ve PKD kodunu muhasebeciyle netleştir.<br>
