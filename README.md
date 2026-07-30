@@ -6,7 +6,7 @@ interaktif, animasyonlu operasyon-akışı sunumları.
 **Ortak DNA:** ağır ekipman yok (işi taşeron/ortak yapıyor) · sabit nokta +
 tekrarlayan rota · abonelik geliri · B2B önce.
 
-**Canlı:** https://halilural.github.io/laundry/
+**Canlı:** https://halilural.github.io/venture-flows/
 
 ## Sayfalar
 
